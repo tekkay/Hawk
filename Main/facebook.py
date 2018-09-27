@@ -21,34 +21,29 @@ bot = ChatBot('Hawk', read_only=True)
 
 
 def facebook_search(text):
-	resultf = None
-	resultM = None
+    resultf = None
+    resultM = None
 	
-	if text is not None:
-		for key in facebook_keywords:
-			if text.startswith('facebook'):
-				resultf = text.replace('facebook', '')
+    if text is not None:
+        for key in facebook_keywords:
+            if text.startswith('facebook'):
+                resultf = text.replace('facebook', '')
 				
-	if resultf is not None:
-		for url in search(text, stop=3):
-			browser = webdriver.Firefox()
-			browser.get('https://www.facebook.com/public/' + resultf)
-			btn = browser.find_element_by_xpath('/html/body/div[1]/div[3]/div[1]/div/div[2]/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div[1]/div[1]/div/div/div/a/img')
-			btn.click()
-			break
-	return 'Encontrado'
-	return resultf
-	
-	if text.startswith('mensagem'):
-		resultM = text.replace('mensagem', '')
-		btn = browser.find_element_by_xpath('//*[@id="u_0_1f"]')
-		btn.click()
-		pyautogui.typewrite(resultM)
-	if text.startswith('enviar'):
-		pyautogui.press('enter')
-					
-	return 'Pode dizer a sua mensagen'
-	return resultM
+    if resultf is not None:
+        for url in search(text, stop=3):
+            browser = webdriver.Firefox()
+            browser.get('https://www.facebook.com', interval=1)
+            pyautogui.typewrite('wellington-vzt@hotmail.com')
+            pyautogui.press('table')
+            pyautogui.typewrite('cueio2016', interval=1)
+            browser.get('https://www.facebook.com/search/top/?q=' + resultf, interval=1)
+            pyautogui.click(x=400, y=260, interval=1)
+            return 'Encontrado'
+            btn = browser.find_element_by_xpath('btn = browser.find_element_by_xpath')
+            pyautogui.typewrite(resultf, interval=0.5)
+            pyautogui.press('enter')
+			
+    return resultf + 'Enviado'
 
 
 def speak(text):

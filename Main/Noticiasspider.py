@@ -4,6 +4,7 @@ from chatterbot.trainers import ChatterBotCorpusTrainer
 from chatterbot import ChatBot 
 from selenium import webdriver
 
+import scrapy
 import pyautogui
 import time
 import os
@@ -22,20 +23,14 @@ speaker = pyttsx3.init()
 
 voices = speaker.getProperty('voices')
 
-bot = ChatBot('Hawk', read_only=True, preprocessors=[
-        'chatterbot.preprocessors.clean_whitespace'
-    ])
-
+bot = ChatBot('Hawk', read_only=True)
+"""
 bot.train(
 	"chatterbot.corpus.portuguese.greetings",
 	"chatterbot.corpus.portuguese.conversations"
-)
+)"""
 
-keywords = ['o que é', 'quem é', 'quem foi', 'definição', 'defina', 'onde é', 'onde foi']
-
-google_keywords = ['pesquise por', 'pesquise']
-
-facebook_keywords = ['facebook', 'mensagem', 'enviar']
+Noticias_keywords = ['noticias', 'noticia']
 
 
 
@@ -43,34 +38,30 @@ for voice in voices:
     if voice.name == 'brazil':
         speaker.setProperty('voice', voice.id)
         voices = speaker.getProperty('voices')
-
-def get_answer(text):
-    result = None
     
-    if text is not None:
-        for key in keywords:
-            if text.startswith(key):
-                result = text.replace(key, '')
-    
-    if result is not None:
-        results = wikipedia.search(result)
-        result = wikipedia.summary(results[0], sentences=1) 
-    return result
-    
-def search_web(text):
+def search_noticia(text):
 	result = None
 	
 	if text is not None:
-		for key in google_keywords:
+		for key in Noticias_keywords:
 			if text.startswith(key):
-				result = text.replace(key, '')
-				
-	if result is not None:
-		for url in search(text, stop=3):
-			webbrowser.open_new_tab(url)
-			break		
+				result = text(key)
+                
+                class GloboNoticiasSpider(scrapy.Spider):
+                    name = "Noticias_Spider"
+                    start_urls = ['https://g1.globo.com/']
+
+                        def parse(sel, response):
+                        SET_SELECTOR= 'div.feed-post-body-title.gui-color-primary.gui-color-hover'
+                        for a in response.css(SET_SELECTOR):
+
+                            NAME_SELECTOR = 'a ::text'
+                            yield {
+                                'Noticia': a.css(NAME_SELECTOR).extract()
+                            }
+	
 	return 'pesquisando'
-	return result + rstrip()
+	return result + yield
 
 def speak(text):
     speaker.say(text)
@@ -96,24 +87,13 @@ with sr.Microphone() as sr:
 			speech = r.recognize_google(audio , language = 'pt').lower()
 					
 			response = run_cmd(evaluate(speech))
-			
-			
-			if response == None:
-				response = get_answer(speech)
+	
 				if response == None:
-					response = facebook_search(speech)
+					response = search_noticia(speech)	
 					if response == None:
-						response = search_web(speech)	
-						if response == None:
-							response = bot.get_response(speech)
+						response = bot.get_response(speech)
 					
 			print('Você: ', speech)
 					
 			print('Hawk: ', response)
 			speak(response)
-		
-			
-
-                
-            
-       

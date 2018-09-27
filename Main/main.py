@@ -31,7 +31,7 @@ def speak(text):
     speaker.say(text)
     speaker.runAndWait()
 
-    """
+    
 from pocketsphinx import LiveSpeech
 
 speech = LiveSpeech(
@@ -48,7 +48,7 @@ for phrase in speech:
     response = bot.get_response(phrase)
     print('Você disse: ', phrase)
     print('Bot: ', response)
-    speak(response) """
+    speak(response)
     
 from pocketsphinx import pocketsphinx, Jsgf, FsgModel
 
@@ -85,9 +85,9 @@ with sr.Microphone() as s:
         
             audio = r.listen(s)
             
-            #speech = recognize_pt(audio)
+            speech = recognize_pt(audio)
             
-            speech = r.recognize_google(audio , language = 'pt').lower()
+            #speech = r.recognize_google(audio , language = 'pt').lower()
             
             print('Você: ', speech)
             
