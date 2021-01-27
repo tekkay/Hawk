@@ -9,7 +9,7 @@ import requests as rq
 import speech_recognition as sr
 from selenium import webdriver
 import imaplib
-import email
+#import email
 from twython import Twython
 
 import os
@@ -18,20 +18,17 @@ from bs4 import BeautifulSoup as bs
 from chatterbot import ChatBot
 """from chatterbot.trainers import ListTrainer"""
 from chatterbot.trainers import ChatterBotCorpusTrainer
+from chatterbot.trainers import ListTrainer
 from googlesearch import search
 import webbrowser
 
-consumer_key = "",
-consumer_secret = "",
-access_token = "",
-access_token_secret = ""
-
-"""from auth import (
+from auth import (
     consumer_key,
     consumer_secret,
     access_token,
     access_token_secret
-)"""
+)
+
 
 tts = ct.CreateObject("sapi.SPVoice")
 r = sr.Recognizer()
@@ -60,11 +57,14 @@ def twit():
     texto = (u"O que deseja twitar?")
     tts.Speak (texto)
     speech = recVoz (r)
+    print('Você: ', speech)
     message = speech
     twitter.update_status(status=message)
-    print(message)
-
+    print(speech)
+    final = (u"twit enviado!")
+    tts.Speak(final)
     main()
+
 
 
 def piadas():
@@ -97,18 +97,25 @@ def noticias():
     print ('Hawk: Jaja lhe digo as últimas notícias')
     pesquisa = (u"Jaja lhe digo as últimas notícias")
     tts.Speak (pesquisa)
-    speech = recVoz (r)
-    print ('Você: ', speech)
-    url = "https://g1.globo.com"
-    page = rq.get (url=url, timeout=3)
-    soup = bs (page.content, 'html.parser')
-    conteudo = soup.find(class_="feed-post")
-    paragrafo = conteudo.find('a')
-    texto = paragrafo.get_text()
-    print ('Hawk: ' + texto)
-    pesquisa = (u"" + texto)
-    tts.Speak(pesquisa)
-    main()
+    #speech = recVoz (r)
+    #print ('Você: ', speech)
+    url = "https://veja.abril.com.br/ultimas-noticias/"
+    reqs = rq.get(url)
+    soup = bs(reqs.text, 'html')
+    print("List of all the h2 :")
+    for heading in soup.find_all(["h2"]):
+        final = (' ' + heading.text.strip())
+        tts.Speak(final)
+        break
+    #page = rq.get (url=url, timeout=3)
+    #soup = bs (page.content, 'html.parser')
+    #conteudo = soup.find(class_="title")
+    #paragrafo = conteudo.find('h2')
+    #texto = conteudo.get_text()
+    #print ('Hawk: ' + texto)
+    #pesquisa = (u"" + texto)
+    #tts.Speak(pesquisa)
+
 
 def pesqGoogle():
     print("Hawk:Pesquisar sobre?")
@@ -155,7 +162,7 @@ def wikipedia_search():
     main()
 
 def email():
-    fromaddr="tekkaay@gmail.com"
+    fromaddr="wellingtontekay@gmail.com"
     deseja = (u"Deseja mandar email para quem?")
     tts.Speak (deseja)
     speech = recVoz (r)
@@ -164,7 +171,7 @@ def email():
     tts.Speak (msg)
     speechm = recVoz (r)
     message=speechm
-    password=''
+    password='Blacktekay12'
     server=smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
     server.login(fromaddr, password)
@@ -265,6 +272,8 @@ def facebook():
 
 def traduzir():
     print('Fale o que deseja traduzir...')
+    sobre = (u"o que deseja traduzir?")
+    tts.Speak(sobre)
     speech = recVoz(r)
     print('Você: ', speech)
     texto = speech.replace(" ", '%20')
@@ -277,9 +286,9 @@ def traduzir():
 
 bot = ChatBot('Hawk')
 
-"""
-bot.set_trainer(ChatterBotCorpusTrainer)
-bot.train(
+
+"""trainer = ChatterBotCorpusTrainer(bot)
+trainer.train(
 	"chatterbot.corpus.portuguese.greetings",
 	"chatterbot.corpus.portuguese.conversations",
     "chatterbot.corpus.portuguese.compliment",
@@ -311,12 +320,14 @@ def treinoExtra(bot):
     resposta = speech
 
     extra = [pergunta, resposta]
-    bot.set_trainer(ChatterBotCorpusTrainer)
-    bot.train(extra)
+    trainer=ListTrainer(bot)
+    trainer.train(extra)
+    final = (u"Treinado")
+    tts.Speak(final)
 
 def main():
     os.system('cls')
-    print('\n\t\t.:: Hawk 0.2 - Beta - by Tekkay Teck ::.\n\n')
+    print('\n\t\t.:: GLADIS 0.2 - Beta - by Tekkay Teck ::.\n\n')
 
 
 
@@ -360,7 +371,7 @@ def main():
                     url = "https://www.climatempo.com.br/previsao-do-tempo/15-dias/cidade/84/vazante-mg"
                     page = rq.get(url=url, timeout=2)
                     soup = bs(page.content, 'html.parser')
-                    content = soup.find(id="tempMin0")
+                    content = soup.find(id="-gray")
                     minima = content.get_text()
                     content = soup.find(id="tempMax0")
                     maxima = content.get_text()
@@ -426,11 +437,11 @@ def main():
                     os.system('cd C:\\Program Files (x86)\\Google\\Chrome\\Application && .\\chrome.exe "'+url+'" ')
                     main()
                 elif speech == "tocar músicas" or speech == "reproduzir músicas":
-                    os.system('cd C:\\Program Files\\MPC-HC.1.7.13.x64 && .\\mpc-hc64.exe C:\\Users\\Coêlho\\Desktop\\Music\\*.mp3')
+                    os.system('cd C:\\Usuários\\Usuario\\Desktop\\Music\\*.mpeg')
                     main()
                 elif speech == "tocar música para relaxar" or speech == "tocar uma música calma" or speech == "tocar música relaxante":
                     os.system(
-                        'cd C:\\Program Files\\MPC-HC.1.7.13.x64 && .\\mpc-hc64.exe C:\\Users\\Coêlho\\Desktop\\Music\\Musica_Relaxante.mp3')
+                        'cd C:\\Program Files\\MPC-HC.1.7.13.x64 && .\\mpc-hc64.exe C:\\Usuários\\Usuario\\Desktop\\Music\\Musica_Relaxante.mp3')
                     main()
                 elif speech == "digitar" or speech == "escrever" or speech == "digite" or speech == "ditado":
                     notas = (u"Abrindo programa de digitação")
